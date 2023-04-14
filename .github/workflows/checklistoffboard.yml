@@ -58,9 +58,9 @@ jobs:
       run: |
         gcloud projects list --filter="project_id=${{ inputs.projectID }}"
         if [ $? -eq 0 ]; then
-          echo "Project ID exists in GCP" >> $GITHUB_ENV
+          $GITHUB_ENV=`echo "Project ID exists in GCP"`
         else
-          echo "Project ID does not exist in GCP" >> $GITHUB_ENV
+          $GITHUB_ENV=`echo "Project ID does not exist in GCP"`
         fi 
     - name: Confirm if the project number in the CNE ticket exists in GCP.
       run: |
