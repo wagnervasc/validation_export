@@ -58,9 +58,9 @@ jobs:
       run: |
         gcloud projects list --filter="project_id=${{ inputs.projectID }}"
         if [ $? -eq 0 ]; then
-          echo "GITHUB_SHA_SHORT=$(echo Project ID exists in GCP)" >> $GITHUB_ENV
+          echo "PROJECT_EXISTS=$(echo Project ID exists in GCP)" >> $GITHUB_ENV
         else
-          echo "Project ID does not exist in GCP"
+          echo "PROJECT_EXISTS=$(echo Project ID does not exist in GCP)" >> $GITHUB_ENV
         fi 
     - name: Confirm if the project number in the CNE ticket exists in GCP.
       run: |
@@ -110,9 +110,9 @@ jobs:
         else
           echo "There are no resources in the project"
         fi
-    - name: Print The REsults of the script
+    - name: Print The Results of the script
       run: |   
-          echo $GITHUB_SHA_SHORT
+          echo $PROJECT_EXISTS
     # - name: Confirm if the project id in the CNE ticket exists in GCP.
     #   run: |
     #     python -c "import os; os.environ['PYTHONPATH'] = os.getcwd(); from python.checklistoff import Checklist; c = Checklist(); c.check_project_exists()"
