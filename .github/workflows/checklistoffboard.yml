@@ -66,53 +66,59 @@ jobs:
       run: |
         gcloud projects list --filter="project_number=${{ inputs.projectNumber }}"
         if [ $? -eq 0 ]; then
-          echo "Project Number exists in GCP"
+          echo "PROJECT_CNE_NUMBER=$(echo Project Number exists in GCP)" >> $GITHUB_ENV
         else
-          echo "Project Number does not exist in GCP"
+          echo "PROJECT_CNE_NUMBER=$(echo Project Number does not exist in GCP)" >> $GITHUB_ENV
         fi
     - name: Check if there are FW rules for the project and if them are enabled.
       run: |
         gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}"
         if [ $? -eq 0 ]; then
-          echo "There are FW rules for the project"
+          echo "PROJECT_FW_RULES=$(echo There are FW rules for the project)" >> $GITHUB_ENV
         else
-          echo "There are no FW rules for the project"
+          echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
         fi
     - name: Verify if there is reserved IP addressess in the project.
       run: |
         gcloud compute instances list --project ${{ inputs.projectID }} --format='table(INTERNAL_IP, EXTERNAL_IP)'
         if [ $? -eq 0 ]; then
-          echo "There are reserved IP addressess in the project"
+          echo "PROJECT_IP_RESERV=$(echo There are reserved IP addressess in the project)" >> $GITHUB_ENV
         else
-          echo "There are no reserved IP addressess in the project"
+          echo "PROJECT_IP_RESERV=$(echo There are no reserved IP addressess in the project)" >> $GITHUB_ENV
         fi
     - name: Check if there are applications running in the cluster
       run: |
         gcloud container clusters list --filter="--project_id=${{ inputs.projectID }}"
         if [ $? -eq 0 ]; then
-          echo "There are applications running in the cluster"
+          echo "PROJECT_APP_RUN=$(echo There are applications running in the cluster)" >> $GITHUB_ENV
         else
-          echo "There are no applications running in the cluster"
+          echo "PROJECT_APP_RUN=$(echo There are no applications running in the cluster)" >> $GITHUB_ENV
         fi
     - name: Check if there are VM Running in the project.
       run: |
         gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}"
         if [ $? -eq 0 ]; then
-          echo "There are VM Running in the project"
+          echo "PROJECT_VM_RUN=$(echo There are VM Running in the project)" >> $GITHUB_ENV
         else
-          echo "There are no VM Running in the project"
+          echo "PROJECT_VM_RUN=$(echo There are no VM Running in the project)" >> $GITHUB_ENV
         fi
     - name: Check if there are any resources in the project.
       run: |
         gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}"
         if [ $? -eq 0 ]; then
-          echo "There are resources in the project"
+          echo "PROJECT_RESOURC=$(echo There are resources in the project)" >> $GITHUB_ENV
         else
-          echo "There are no resources in the project"
+          echo "PROJECT_RESOURC=$(echo There are no resources in the project)" >> $GITHUB_ENV
         fi
     - name: Print The Results of the script
       run: |   
           echo $PROJECT_EXISTS
+          echo $PROJECT_CNE_NUMBER
+          echo $PROJECT_FW_RULES
+          echo $PROJECT_IP_RESERV
+          echo $PROJECT_APP_RUN
+          echo $PROJECT_VM_RUN
+          echo $PROJECT_RESOURC
     # - name: Confirm if the project id in the CNE ticket exists in GCP.
     #   run: |
     #     python -c "import os; os.environ['PYTHONPATH'] = os.getcwd(); from python.checklistoff import Checklist; c = Checklist(); c.check_project_exists()"
