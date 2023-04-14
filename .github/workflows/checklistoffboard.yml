@@ -7,12 +7,12 @@ on:
         description: 'GCP Project ID'
         type: string
         required: true
-        default: 'winterfoxit-333200'
+        default: 'rosy-environs-331121'
       projectNUMBER:
         description: 'GCP Project Number'
         type: string
         required: true
-        default: '901815459324'
+        default: '665544881984'
       Locations:
         description: "Location(s):"
         type: "string"
