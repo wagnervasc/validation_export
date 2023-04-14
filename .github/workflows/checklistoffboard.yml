@@ -74,9 +74,9 @@ jobs:
       run: |
         OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" 2>&1)
         if [ -z "$OUT" ]; then
-          echo "PROJECT_FW_RULES=$(echo There are FW rules for the project)" >> $GITHUB_ENV
-        else
           echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
+        else
+          echo "PROJECT_FW_RULES=$(echo There are FW rules for the project)" >> $GITHUB_ENV
         fi
     - name: Verify if there is reserved IP addressess in the project.
       run: |
