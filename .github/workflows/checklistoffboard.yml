@@ -73,7 +73,6 @@ jobs:
     - name: Check if there are FW rules for the project and if them are enabled.
       run: |
         OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" | grep NAME |wc -l)
-        echo $OUT
         if [ "$OUT" -gt 0 ]; then
           echo "PROJECT_FW_RULES=$(echo There are FW rules for the project)" >> $GITHUB_ENV
         else
@@ -81,8 +80,8 @@ jobs:
         fi
     - name: Verify if there is reserved IP addressess in the project.
       run: |
-        gcloud compute instances list --project ${{ inputs.projectID }} --format='table(INTERNAL_IP, EXTERNAL_IP)'
-        if [ $? -eq 0 ]; then
+        OUT=$(gcloud compute instances list --project ${{ inputs.projectID }} --format='table(INTERNAL_IP, EXTERNAL_IP)')
+        if [ -z "$OUT" ]; then
           echo "PROJECT_IP_RESERV=$(echo There are no reserved IP addressess in the project)" >> $GITHUB_ENV
         else
           echo "PROJECT_IP_RESERV=$(echo There are reserved IP addressess in the project)" >> $GITHUB_ENV
@@ -97,11 +96,11 @@ jobs:
         fi
     - name: Check if there are VM Running in the project.
       run: |
-        gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}"
-        if [ $? -eq 0 ]; then
-          echo "PROJECT_VM_RUN=$(echo There are no VM Running in the project)" >> $GITHUB_ENV
-        else
+        OUT=$(gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}" | grep NAME |wc -l)
+        if [ "$OUT" -gt 0 ]; then
           echo "PROJECT_VM_RUN=$(echo There are VM Running in the project)" >> $GITHUB_ENV
+        else
+          echo "PROJECT_VM_RUN=$(echo There are no VM Running in the project)" >> $GITHUB_ENV
         fi
     - name: Print The Results of the script
       run: |   
