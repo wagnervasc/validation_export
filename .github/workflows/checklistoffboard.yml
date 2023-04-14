@@ -74,9 +74,9 @@ jobs:
       run: |
         OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" grep NAME |wc -l)
         if ["$OUT" -gt 0 ]; then
-          echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
-        else
           echo "PROJECT_FW_RULES=$(echo There are FW rules for the project)" >> $GITHUB_ENV
+        else
+          echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
         fi
     - name: Verify if there is reserved IP addressess in the project.
       run: |
@@ -88,11 +88,11 @@ jobs:
         fi
     - name: Check if there are applications running in the cluster
       run: |
-        gcloud container clusters list --filter="--project_id=${{ inputs.projectID }}"
-        if [ $? -eq 0 ]; then
-          echo "PROJECT_APP_RUN=$(echo There are applications running in the cluster)" >> $GITHUB_ENV
-        else
+        OUT=$(gcloud container clusters list --filter="--project_id=${{ inputs.projectID }}")
+        if [ -z "$OUT" ]; then
           echo "PROJECT_APP_RUN=$(echo There are no applications running in the cluster)" >> $GITHUB_ENV
+        else
+          echo "PROJECT_APP_RUN=$(echo There are applications running in the cluster)" >> $GITHUB_ENV
         fi
     - name: Check if there are VM Running in the project.
       run: |
