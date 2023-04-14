@@ -80,7 +80,7 @@ jobs:
         fi
     - name: Verify if there is reserved IP addressess in the project.
       run: |
-        gcloud compute instances list --project winterfoxit-333200 --format='table(INTERNAL_IP, EXTERNAL_IP)'
+        gcloud compute instances list --project ${{ inputs.projectID }} --format='table(INTERNAL_IP, EXTERNAL_IP)'
         if [ $? -eq 0 ]; then
           echo "There are reserved IP addressess in the project"
         else
