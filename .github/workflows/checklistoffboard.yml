@@ -1,0 +1,126 @@
+name: Checklist Validation
+
+on:
+  workflow_dispatch:
+    inputs: 
+      projectID:
+        description: 'GCP Project ID'
+        type: string
+        required: true
+        default: 'winterfoxit-333200'
+      projectNUMBER:
+        description: 'GCP Project Number'
+        type: string
+        required: true
+        default: '901815459324'
+      Locations:
+        description: "Location(s):"
+        type: "string"
+        default: "us-central1-a"
+        required: true
+  push:
+    branches: [ main ]
+      
+jobs:
+  Checklist-Steps:
+    runs-on: [ubuntu-latest]
+    permissions:
+        contents: 'read'
+        id-token: 'write'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      env:
+        #NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-bundle.crt
+        #GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #WORKFLOW_ENVIRONMENT: ${{ secrets.WORKFLOW_ENVIRONMENT }}
+        project_id: ${{ inputs.projectID }}
+        project_number: ${{ inputs.projectNumber }}
+        locations: ${{ inputs.locations }}
+    - name: Inputs
+      run: |
+        echo "Project ID = ${{ inputs.projectID }}"
+        echo "Project number = ${{ inputs.projectNumber }}"
+        echo "Locations = ${{ inputs.Locations }}"
+    -  uses: actions/checkout@v3
+    #-  uses: actions/setup-python@v4
+     #  with:
+      #  python-version: '3.9'
+    #- run: pip install -r requirements.txt
+    #- name: Install dependencies
+    #  run:  pip install --upgrade google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2 google-cloud-resource-manager oauth2client google-cloud-compute
+    
+    - name: Authenticate with GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+    - name: Confirm if the project id in the CNE ticket exists in GCP.
+      run: |
+        gcloud projects list --filter="project_id=${{ inputs.projectID }}"
+        if [ $? -eq 0 ]; then
+          echo "Project ID exists in GCP"
+        else
+          echo "Project ID does not exist in GCP"
+        fi 
+    - name: Confirm if the project number in the CNE ticket exists in GCP.
+      run: |
+        gcloud projects list --filter="project_number=${{ inputs.projectNumber }}"
+        if [ $? -eq 0 ]; then
+          echo "Project Number exists in GCP"
+        else
+          echo "Project Number does not exist in GCP"
+        fi
+    - name: Check if there are FW rules for the project and if them are enabled.
+      run: |
+        gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}"
+        if [ $? -eq 0 ]; then
+          echo "There are FW rules for the project"
+        else
+          echo "There are no FW rules for the project"
+        fi
+    - name: Verify if there is reserved IP addressess in the project.
+      run: |
+        gcloud compute instances list --project winterfoxit-333200 --format='table(INTERNAL_IP, EXTERNAL_IP)'
+        if [ $? -eq 0 ]; then
+          echo "There are reserved IP addressess in the project"
+        else
+          echo "There are no reserved IP addressess in the project"
+        fi
+    - name: Check if there are applications running in the cluster
+      run: |
+        gcloud container clusters list --filter="--project_id=${{ inputs.projectID }}"
+        if [ $? -eq 0 ]; then
+          echo "There are applications running in the cluster"
+        else
+          echo "There are no applications running in the cluster"
+        fi
+    - name: Check if there are VM Running in the project.
+      run: |
+        gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}"
+        if [ $? -eq 0 ]; then
+          echo "There are VM Running in the project"
+        else
+          echo "There are no VM Running in the project"
+        fi
+    - name: Check if there are any resources in the project.
+      run: |
+        gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}"
+        if [ $? -eq 0 ]; then
+          echo "There are resources in the project"
+        else
+          echo "There are no resources in the project"
+        fi
+    
+    # - name: Confirm if the project id in the CNE ticket exists in GCP.
+    #   run: |
+    #     python -c "import os; os.environ['PYTHONPATH'] = os.getcwd(); from python.checklistoff import Checklist; c = Checklist(); c.check_project_exists()"
+    # - name: Confirm if the project number in the CNE ticket exists in GCP.
+    #   run: python -c "from python.checklistoff import Checklist; c = Checklist(); c.check_project_number()"
+    # - name: Check if there are FW rules for the project and if them are enabled.
+    #   run: python -c "from python.checklistoff import Checklist; c = Checklist(); c.check_firewall_rule_status()"
+    # - name: Verify if there is reserved IP addressess in the project.
+    #   run: python -c "from python.checklistoff import Checklist; c = Checklist(); c.check_reserved_ip()"
+    # - name: Check if there are applications running in the cluster.
+    #   run: python -c "from python.checklistoff import Checklist; c = Checklist(); c.check_cluster_in_use()"
+    # - name: Check if there are VM Running in the project.
+    #   run: python -c "from python.checklistoff import Checklist; c = Checklist(); c.check_compute_in_use()"

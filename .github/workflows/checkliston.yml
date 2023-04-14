@@ -1,0 +1,53 @@
+name: Checklist On Boarding
+
+on:
+  workflow_dispatch:
+    inputs:
+      projectID:
+        description: 'GCP Project ID'
+        type: string
+        required: true
+        default: 'winterfoxit-333200'
+      projectNUMBER:
+        description: 'GCP Project Number'
+        type: string
+        required: true
+        default: '901815459324'
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  Checklist-Steps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        env:
+          project_id: 'winterfoxit-333200'
+          project_number: 901815459324
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: List Projects
+        run:
+          gcloud projects list
+      - name: Check if projeect exists
+        run:
+          gcloud projects describe 'winterfoxit-333200'
+      - name: Check if project is enabled
+        run:
+          gcloud services list --project 901815459324
+      - name: Check if projecy number is valid
+        shell: bash  
+        run: |
+          function check_project_number() {
+            local project_number=$1
+            local project_id=$2
+            local project_number_from_gcloud=$(gcloud projects describe $project_id --format="value(projectNumber)")
+            if [[ $project_number_from_gcloud != $project_number ]]; then
+              echo "Project number $project_number does not match project number $project_number_from_gcloud from gcloud"
+            else
+              echo "Project number $project_number matches project number $project_number_from_gcloud from gcloud"
+            fi
+          }
