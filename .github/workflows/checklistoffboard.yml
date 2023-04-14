@@ -72,9 +72,9 @@ jobs:
         fi
     - name: Check if there are FW rules for the project and if them are enabled.
       run: |
-        OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" grep NAME |wc -l)
+        OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" | grep NAME |wc -l)
         echo $OUT
-        if [["$OUT" -gt 0 ]]; then
+        if ["$OUT" -gt 0 ]; then
           echo "PROJECT_FW_RULES=$(echo There are FW rules for the project)" >> $GITHUB_ENV
         else
           echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
