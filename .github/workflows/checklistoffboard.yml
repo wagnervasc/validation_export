@@ -38,6 +38,7 @@ jobs:
         project_number: ${{ inputs.projectNumber }}
         locations: ${{ inputs.locations }}
         Red: ${{ '\033[0;31m' }}
+        Gren: ${{ '\033[0;32m' }}
     - name: Inputs
       run: |
         echo "Project ID = ${{ inputs.projectID }}"
@@ -107,16 +108,16 @@ jobs:
       run: |   
           if [[ -z ${LIST_ERROR} ]];
              then 
-               echo "The Project is ready to be removed, checks made below:"
-               echo $PROJECT_EXISTS
-               echo $PROJECT_CNE_NUMBER
-               echo -e "${Red} ${PROJECT_FW_RULES}"
-               echo $PROJECT_IP_RESERV
-               echo $PROJECT_APP_RUN
-               echo $PROJECT_VM_RUN
-               echo $PROJECT_RESOURC
+               echo -e "${Gren} The Project is ready to be removed, summary of resources checked:"
+               echo ${PROJECT_EXISTS}
+               echo ${PROJECT_CNE_NUMBER}
+               echo ${PROJECT_FW_RULES}
+               echo ${PROJECT_IP_RESERV}
+               echo ${PROJECT_APP_RUN}
+               echo ${PROJECT_VM_RUN}
+               echo ${PROJECT_RESOURC}
              else
-               echo "The Project is not ready to be removed, please remove the resourses below"
+               echo -e "${Red} The Project is not ready to be removed, please check the resourses below"
                echo -e "${LIST_ERROR}"
              fi
 
