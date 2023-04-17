@@ -37,6 +37,7 @@ jobs:
         project_id: ${{ inputs.projectID }}
         project_number: ${{ inputs.projectNumber }}
         locations: ${{ inputs.locations }}
+        Red='\033[0;31m'
     - name: Inputs
       run: |
         echo "Project ID = ${{ inputs.projectID }}"
@@ -75,7 +76,7 @@ jobs:
       run: |
         OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" | grep NAME |wc -l)
         if [ "$OUT" -gt 0 ]; then
-          echo "PROJECT_FW_RULES=$(echo "\033[0;31m There are FW rules for the project \033[0m")" >> $GITHUB_ENV
+          echo "PROJECT_FW_RULES=$(echo "There are FW rules for the project")" >> $GITHUB_ENV
         else
           echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
         fi
@@ -107,7 +108,7 @@ jobs:
       run: |   
           echo $PROJECT_EXISTS
           echo $PROJECT_CNE_NUMBER
-          echo $PROJECT_FW_RULES
+          echo -e "${Red} ${PROJECT_FW_RULES}"
           echo $PROJECT_IP_RESERV
           echo $PROJECT_APP_RUN
           echo $PROJECT_VM_RUN
