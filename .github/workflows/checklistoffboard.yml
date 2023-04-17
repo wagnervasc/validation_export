@@ -72,7 +72,6 @@ jobs:
           echo "PROJECT_CNE_NUMBER=$(echo Project Number does not exist in GCP)" >> $GITHUB_ENV
         fi
     - name: Check if there are FW rules for the project and if them are enabled.
-      shell: bash
       run: |
         OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" | grep NAME |wc -l)
         if [ "$OUT" -gt 0 ]; then
