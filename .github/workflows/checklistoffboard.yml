@@ -108,7 +108,7 @@ jobs:
       run: |   
           echo $PROJECT_EXISTS
           echo $PROJECT_CNE_NUMBER
-          echo -e "${{Red}} ${PROJECT_FW_RULES}"
+          echo -e "${Red} ${PROJECT_FW_RULES}"
           echo $PROJECT_IP_RESERV
           echo $PROJECT_APP_RUN
           echo $PROJECT_VM_RUN
