@@ -76,7 +76,7 @@ jobs:
       run: |
         OUT=$(gcloud compute firewall-rules list --filter="network:default AND --project=${{ inputs.projectID }}" | grep NAME |wc -l)
         if [ "$OUT" -gt 0 ]; then
-          echo "LIST_ERROR=$(echo "\n${LIST_ERROR}\n There are FW rules for the project")" >> $GITHUB_ENV
+          echo "LIST_ERROR=$(echo "${LIST_ERROR}\n There are FW rules for the project")" >> $GITHUB_ENV
         else
           echo "PROJECT_FW_RULES=$(echo There are no FW rules for the project)" >> $GITHUB_ENV
         fi
@@ -84,9 +84,9 @@ jobs:
       run: |
         OUT=$(gcloud compute instances list --project ${{ inputs.projectID }} --format='table(INTERNAL_IP, EXTERNAL_IP)')
         if [ -z "$OUT" ]; then
-          echo "LIST_ERROR=$(echo "\n${LIST_ERROR}\n There are no reserved IP addressess in the project")" >> $GITHUB_ENV
+          echo "PROJECT_IP_RESERV=$(echo "There are no reserved IP addressess in the project")" >> $GITHUB_ENV
         else
-          echo "PROJECT_IP_RESERV=$(echo There are reserved IP addressess in the project)" >> $GITHUB_ENV
+          echo "LIST_ERROR=$(echo "${LIST_ERROR}\n There are reserved IP addressess in the project")" >> $GITHUB_ENV
         fi
     - name: Check if there are applications running in the cluster
       run: |
@@ -94,13 +94,13 @@ jobs:
         if [ -z "$OUT" ]; then
           echo "PROJECT_APP_RUN=$(echo There are no applications running in the cluster)" >> $GITHUB_ENV
         else
-          echo "PROJECT_APP_RUN=$(echo There are applications running in the cluster)" >> $GITHUB_ENV
+          echo "LIST_ERROR=$(echo "${LIST_ERROR}\n There are applications running in the cluster")" >> $GITHUB_ENV
         fi
     - name: Check if there are VM Running in the project.
       run: |
         OUT=$(gcloud compute instances list --filter="--project_id=${{ inputs.projectID }}" | grep NAME |wc -l)
         if [ "$OUT" -gt 0 ]; then
-          echo "PROJECT_VM_RUN=$(echo There are VM Running in the project)" >> $GITHUB_ENV
+          echo "PROJECT_VM_RUN=$(echo "${LIST_ERROR}\n There are VM Running in the project")" >> $GITHUB_ENV
         else
           echo "PROJECT_VM_RUN=$(echo There are no VM Running in the project)" >> $GITHUB_ENV
         fi
