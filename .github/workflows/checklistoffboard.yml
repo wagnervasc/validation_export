@@ -37,7 +37,7 @@ jobs:
         project_id: ${{ inputs.projectID }}
         project_number: ${{ inputs.projectNumber }}
         locations: ${{ inputs.locations }}
-        Red: ${ '\033[0;31m' }
+        Red: ${{ '\033[0;31m' }}
     - name: Inputs
       run: |
         echo "Project ID = ${{ inputs.projectID }}"
