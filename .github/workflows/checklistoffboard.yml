@@ -84,7 +84,7 @@ jobs:
       run: |
         OUT=$(gcloud compute instances list --project ${{ inputs.projectID }} --format='table(INTERNAL_IP, EXTERNAL_IP)')
         if [ -z "$OUT" ]; then
-          echo "LIST_ERROR=$(echo There are no reserved IP addressess in the project)" >> $GITHUB_ENV
+          echo "LIST_ERROR=$(echo ${LIST_ERROR}\n There are no reserved IP addressess in the project)" >> $GITHUB_ENV
         else
           echo "PROJECT_IP_RESERV=$(echo There are reserved IP addressess in the project)" >> $GITHUB_ENV
         fi
